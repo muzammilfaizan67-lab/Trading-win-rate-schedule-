@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Faizan Trading App</title>
+
+<link rel="manifest" href="data:application/json,{
+\"name\":\"Faizan Trading App\",
+\"short_name\":\"TradingApp\",
+\"start_url\":\".\",
+\"display\":\"standalone\",
+\"background_color\":\"#0d0d0d\",
+\"theme_color\":\"#00ffcc\"
+}">
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#0d0d0d;
+color:#fff;
+overflow-x:hidden;
+}
+
+/* SPLASH */
+#splash{
+position:fixed;
+width:100%;
+height:100%;
+background:#000;
+display:flex;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+z-index:999;
+animation:fade 3s forwards;
+}
+
+#welcome{
+font-size:22px;
+color:#00ffcc;
+animation:pop 1.5s infinite;
+}
+
+@keyframes pop{
+0%{transform:scale(1);}
+50%{transform:scale(1.2);}
+100%{transform:scale(1);}
+}
+
+@keyframes fade{
+0%{opacity:1;}
+80%{opacity:1;}
+100%{opacity:0;visibility:hidden;}
+}
+
+/* HEADER */
+.header{
+background:#111;
+padding:15px;
+text-align:center;
+color:#00ffcc;
+font-weight:bold;
+}
+
+/* WEEK CARD */
+.week{
+background:#1a1a1a;
+margin:10px;
+padding:10px;
+border-radius:10px;
+animation:slide .4s ease;
+}
+
+@keyframes slide{
+from{transform:translateY(20px);opacity:0;}
+to{transform:translateY(0);opacity:1;}
+}
+
+h3{color:#00ffcc}
+
+/* TABLE */
+table{
+width:100%;
+border-collapse:collapse;
+font-size:12px;
+}
+
+th,td{
+border:1px solid #333;
+padding:5px;
+text-align:center;
+}
+
+th{background:#222;}
+
+select,input{
+width:100%;
+background:#111;
+color:#fff;
+border:1px solid #333;
+font-size:12px;
+}
+
+/* BUTTON */
+button{
+width:100%;
+padding:10px;
+background:#00ffcc;
+border:none;
+font-weight:bold;
+margin-top:10px;
+}
+
+/* DELETE */
+.del{
+background:red;
+color:#fff;
+padding:5px;
+border:none;
+width:100%;
+margin-top:5px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+<h1 id="welcome">👋 Welcome Faizan</h1>
+<p style="color:#aaa">Loading Trading App...</p>
+</div>
+
+<div class="header">📊 Faizan Trading PWA Dashboard</div>
+
+<button onclick="addWeek()">➕ New Week</button>
+
+<div id="weeks"></div>
+
+<script>
+
+/* AUTO HIDE SPLASH */
+setTimeout(()=>document.getElementById("splash").style.display="none",3000);
+
+let weekCount = 0;
+
+/* ADD WEEK */
+function addWeek(){
+weekCount++;
+
+let div=document.createElement("div");
+div.className="week";
+
+div.innerHTML=`
+<h3>📅 Week ${weekCount}</h3>
+
+<h4>🟢 Trader 1</h4>
+${table()}
+
+<h4>🔵 Trader 2</h4>
+${table()}
+
+<h4>🟣 Trader 3</h4>
+${table()}
+
+<button class="del" onclick="this.parentElement.remove(); save()">🗑 Delete Week</button>
+`;
+
+document.getElementById("weeks").appendChild(div);
+save();
+}
+
+/* TABLE */
+function table(){
+return `
+<table>
+<tr>
+<th>Day</th>
+<th>Signal</th>
+<th>Result</th>
+</tr>
+
+${day("Mon")}
+${day("Tue")}
+${day("Wed")}
+${day("Thu")}
+${day("Fri")}
+${day("Sat")}
+${day("Sun")}
+
+</table>
+`;
+}
+
+/* DAY ROW */
+function day(d){
+return `
+<tr>
+<td>${d}</td>
+<td><input placeholder="Signal"></td>
+<td>
+<select onchange="alertMe(this)">
+<option>Null</option>
+<option>True</option>
+<option>Fail</option>
+</select>
+</td>
+</tr>
+`;
+}
+
+/* ALERT SYSTEM */
+function alertMe(el){
+if(el.value=="True") alert("📢 WIN SIGNAL");
+if(el.value=="Fail") alert("📢 LOSS SIGNAL");
+save();
+}
+
+/* SAVE HISTORY */
+function save(){
+localStorage.setItem("faizan_app",document.getElementById("weeks").innerHTML);
+}
+
+/* LOAD HISTORY */
+function load(){
+let data=localStorage.getItem("faizan_app");
+if(data){
+document.getElementById("weeks").innerHTML=data;
+}
+}
+
+load();
+
+</script>
+
+</body>
+</html>
